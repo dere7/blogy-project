@@ -2,16 +2,16 @@
 """Users model"""
 from mongoengine import *
 import bcrypt
-from .. import db
+from . import db
 
 
 class User(db.Document):
     """User model that is used for auth"""
-    first_name = StringField(max_length=120, required=True)
-    last_name = StringField(max_length=120, required=True)
-    email = EmailField(required=True, unique=True)
-    password = StringField(required=True)
-    profile_pic = URLField()
+    first_name = db.StringField(max_length=120, min_length=2, required=True)
+    last_name = db.StringField(max_length=120, min_length=2, required=True)
+    email = db.EmailField(required=True, unique=True)
+    password = db.StringField(required=True)
+    profile_pic = db.URLField()
 
     def check_password(self, password: str) -> bool:
         """Checks if the password is correct"""

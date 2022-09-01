@@ -4,8 +4,7 @@ from os import getenv
 from flask_mongoengine import MongoEngine
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
-
-db = MongoEngine()
+from .models import db
 
 
 def create_app(config=None):
