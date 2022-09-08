@@ -4,35 +4,53 @@ from mongoengine import disconnect
 import bcrypt
 from blogy import create_app
 from blogy.models.user import User
+from blogy.models.post import Post
 
 
 @pytest.fixture
 def app():
-    """configures flask app"""
+    '''configures flask app'''
+    disconnect()
     app = create_app({
         'TESTING': True,
-        'DB': 'blogy_test'
+        'MONGODB_SETTINGS': [{
+            'db': 'blogy_test',
+            'connect': True
+        }]
     })
 
     with app.app_context():
-        User(first_name='John', last_name='Doe',
-             email='johndoe@gmail.com', password=bcrypt.hashpw(b'john1234', bcrypt.gensalt())).save()
+        user = User(full_name='John Doe', email='johndoe@gmail.com',
+                    password=bcrypt.hashpw(b'john1234', bcrypt.gensalt())).save()
+        post = {'title': 'test title',
+                'body': 'test body',
+                'cover_pic': None,
+                'is_published': True,
+                'tags': ['test', 'flask', 'mongdb']
+                }
+        Post(**post, author=user).save()
+
     yield app
     User.drop_collection()
+    Post.drop_collection()
+    disconnect()
 
 
 @pytest.fixture
 def client(app):
-    """creates a client to make requests to the application without
-    running the server"""
+    '''creates a client to make requests to the application without
+    running the server'''
     return app.test_client()
 
 
 class AuthActions:
+    '''handle auth'''
+
     def __init__(self, client):
         self._client = client
 
     def login(self, email='johndoe@gmail.com', password='john1234'):
+        '''gets token'''
         response = self._client.post(
             '/user/login',
             data={'email': email, 'password': password}
@@ -42,5 +60,5 @@ class AuthActions:
 
 @pytest.fixture
 def auth(client):
-    """used for tests that requires auth"""
+    '''used for tests that requires auth'''
     return AuthActions(client)
