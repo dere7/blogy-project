@@ -52,12 +52,12 @@ def create_app(config=None):
         return jsonify(status='OK')
 
     @app.errorhandler(404)
-    def not_found(e):
+    def bad_request(e):
         print(e)
         return jsonify(error=str(e)), 404
 
     @app.errorhandler(400)
-    def not_found(e):
+    def bad_request(e):
         return jsonify(error=str(e)), 400
 
     from .view import user, post
