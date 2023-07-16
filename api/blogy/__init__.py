@@ -52,7 +52,7 @@ def create_app(config=None):
         return jsonify(status='OK')
 
     @app.errorhandler(404)
-    def bad_request(e):
+    def not_found(e):
         print(e)
         return jsonify(error=str(e)), 404
 

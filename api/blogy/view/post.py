@@ -40,11 +40,11 @@ def get_posts():
     return get_posts_paginated()
 
 
-@bp.route('/me/posts')
+@bp.route('/me')
 @jwt_required()
 def get_user_posts():
     """
-    GET /me/posts
+    GET /me
         - get current user posts
     """
     return get_posts_paginated(author=current_user)
